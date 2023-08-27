@@ -404,3 +404,35 @@ The proposed system leverages the redundancy of DHTs and erasure coding to ensur
     - Use multi-factor authentication to confirm transaction requests, especially if there's a deviation from typical user behavior.
 
 By adjusting the communication concept around these constraints, the Portmanteau wallet peer nodes can maintain a robust, efficient, and secure network while recognizing the mobile-centric and sporadic online behavior of its users.
+
+
+
+***Maintaining friend anonymity within a system while ensuring they get notifications requires a strategy that separates the identity of the friend from the actual push mechanism. Here's a method to achieve this:***
+
+### Token-Based Anonymous Notification System
+
+1. **Token Generation**:
+   - When setting up the multisig wallet, each friend (participant) in the multisig group generates a unique, one-time-use token.
+   
+2. **Token Registration with Notification Service**:
+   - Each friend registers their unique token with a decentralized notification service, without linking it to their actual wallet address or identity. This service is solely responsible for handling push notifications.
+   - For an added layer of security, the registration process can be done over Tor or a similar anonymizing network.
+
+3. **Storing Tokens in Wallet**:
+   - The user's wallet stores these one-time-use tokens, but has no knowledge about which token is linked to which friend. 
+
+4. **Notification Initiation**:
+   - When the user wants to initiate a multisig transaction, their wallet sends a notification request to the decentralized notification service using these tokens.
+   - The service then pushes notifications to devices linked with these tokens without revealing or knowing the identity behind each token.
+
+5. **Token Rotation for Enhanced Anonymity**:
+   - Once a token has been used to receive a notification, it gets flagged or discarded. The friend's wallet will automatically generate a new token, register it with the notification service, and then securely communicate this new token to the user's wallet.
+   - This ensures that even if an external actor collects these tokens over time, they cannot establish a consistent pattern or link them to specific individuals.
+
+6. **Decentralized Notification Service**:
+   - To prevent centralization and potential data collection by a single entity, the notification service itself can be built on a decentralized platform or framework, similar to how dApps operate on platforms like Ethereum. This ensures that there's no single point of control or failure.
+
+7. **End-to-End Encryption**:
+   - All communications between the user's wallet, the friend's wallet, and the notification service should be end-to-end encrypted, ensuring that even if data transmission is intercepted, the content remains confidential.
+
+Through this token-based system, friends remain anonymous to the wallet itself, while still receiving necessary notifications. The continuous rotation of tokens and use of a decentralized notification platform ensures high levels of privacy and security.
