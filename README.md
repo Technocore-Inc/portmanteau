@@ -15,9 +15,10 @@ p2p multisig wallet
 
 **2. Multi-sig Configuration:**
 
-- The user can select friends to be co-signers for the multi-sig address.
-- For each friend, the wallet generates a public/private key pair. The public key is shared with the friend's Portmanteau wallet, while the private key remains with the user.
-- The user sets the threshold for how many signatures are needed to authorize a transaction. For example, if the user selects 5 friends, they might set a threshold of 3 signatures to unlock the funds.
+- The user initiates the creation of a multi-sig address and invites selected friends to be co-signers.
+Each invited friend, through their own Portmanteau wallet, generates and sends a public key to the user. This public key is essential for the multi-sig configuration but does not compromise the security of the friend's wallet.
+- The private keys corresponding to these public keys remain securely on the friends' devices, ensuring they have full control of their signature authority.
+- The user then sets the threshold for how many signatures are needed to authorize a transaction. For instance, if the user invites 5 friends, they might require at least 3 of their signatures to unlock the funds.
 
 **3. Regular and Long-Term Compartments:**
 
