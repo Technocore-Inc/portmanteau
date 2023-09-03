@@ -25,22 +25,165 @@ Each invited friend, through their own Portmanteau wallet, generates and sends a
 - **Regular Compartment**: The user can transact normally using the private key stored on the device.
 - **Long-Term Compartment**: To spend funds, the user sends a transaction request to the selected friends. This is a secure inquiry asking them to sign the multi-sig transaction.
 
-**4. Transaction Authorization from Friends:**
+**4. Transaction Authorization from Friends with Flexible Security Options:**
 
-- When a friend receives a transaction request, they can verify the identity of the user through a third-party channel (e.g., a phone call or video chat).
-- Once the friend verifies the user's identity, they sign the transaction using their private key associated with the multi-sig address.
-- After the required number of signatures is met (e.g., 3 out of 5 friends), the transaction is broadcasted to the network and funds are transferred from the long-term storage to the regular compartment or any other address.
+- **Initiation**:
+  - The user initiates a transaction from their wallet. To authorize a transaction from the multisig compartment, signatures from a subset of their designated friends are required.
+
+- **Flexible Data Generation**:
+  - Upon initiating a transaction, the wallet software prompts the user with security options: "Would you like to share transaction details via QR Code, Steganographic Image, or both?" 
+  - Depending on the user's choice, the wallet generates the required representation:
+    1. QR Code
+    2. Steganographic Image
+    3. Hybrid (both QR code and steganographic image)
+  
+- **Steganographic Encapsulation** (if chosen):
+  - The transaction details are seamlessly embedded within a chosen image using steganography, making it imperceptible to the naked eye.
+
+- **QR Code Generation** (if chosen):
+  - A QR code representing the transaction details is generated.
+
+- **Sharing & Identity Verification**:
+  - The user shares the chosen method(s) with their designated friends, either digitally or in person.
+  - Upon receiving, friends then verify the user's identity through a third-party channel such as a phone call, video chat, or face-to-face interaction.
+
+- **Decoding & Authorization**:
+  - Depending on the method(s) the user chose:
+    - For QR: Friends can scan the QR code to retrieve transaction details swiftly.
+    - For Steganographic Image: Friends use a steganography tool or a compatible wallet feature to extract details from the image.
+  
+  - After retrieving and verifying the transaction details, each friend signs the transaction with their private key tied to the multisig address.
+  
+- **Signature Collection & Broadcasting**:
+  - As the user collects the required number of signatures (e.g., 3 out of 5 friends), the wallet compiles them.
+  - Once the threshold is met, the wallet broadcasts the transaction to the network, permitting the transfer of funds from the multisig compartment to the intended address.
+
+*By providing the user with a choice between QR codes, steganographic images, or a hybrid method, this approach caters to different security preferences and use cases. Some users may prioritize discretion and opt for steganography, while others might lean towards the quick convenience of QR codes. The hybrid option offers a balanced mix of both security and ease.*
 
 **5. Backup & Recovery:**
 
-- The user can backup the regular compartment's private key and the multi-sig configuration (not the private keys of the friends, for security reasons).
-- In case of device loss or wallet deletion, the user can restore the regular compartment with the backed-up private key. For the multi-sig compartment, they would need to re-add friends and have them sign again.
+- **Regular Compartment**:
+  - The user should backup the private key of the regular compartment. This ensures that in the event of a device malfunction, loss, or wallet deletion, they can restore the regular compartment using this backed-up private key.
+
+- **Multisig Compartment**:
+  - The user doesn't need to backup the friends' private keys (and shouldn't for security reasons). However, they should document the multisig configuration, like the threshold for the number of signatures required and the public keys or xpubs of the participants.
+  - In the event of a wallet recovery scenario, the user would need to re-setup the multisig compartment. They would have to re-invite or re-add friends and gather their public keys again for the multisig address generation. Afterward, the required number of friends must sign any pending transactions again.
+
+- **Shamir's Secret Sharing**:
+  - Instead of backing up the private key directly, the user can opt for Shamir's Secret Sharing (SSS) for added security. Here's how it works:
+    1. The private key of the regular compartment (or the seed phrase) is split into multiple parts using Shamir's algorithm. 
+    2. A threshold is set, determining how many parts are needed to reconstruct the original private key. For example, the key might be split into 5 parts, with any 3 required to reconstruct the full key.
+    3. These parts or shares can be distributed to trusted entities or stored in different locations. They provide redundancy, so if one or more parts are lost, the private key can still be reconstructed as long as the threshold number of parts is available.
+  - In a recovery scenario:
+    1. The user would gather the necessary number of parts (e.g., 3 out of 5).
+    2. Using the Shamir's algorithm, these parts would be combined to reconstruct the original private key, allowing for wallet restoration.
+
+*By leveraging Shamir's Secret Sharing, the user can achieve a higher level of security for backups, protecting against both device loss and potential threats, as no single share provides insight into the actual private key.*
+
+*Hierarchical Deterministic (HD) introduces a systematic structure and enhanced privacy.*
+
+a. **HD Wallet Creation for Each Participant**:
+   - Every participant (including the main user and their friends) generates their HD wallet. This involves the creation of a seed phrase, which leads to the derivation of a master private key and a corresponding master public key.
+   
+b. **Multisig Extended Public Key Sharing**:
+   - Each participant derives an extended public key (xpub) from their HD wallet for the multisig compartment. They share only this xpub with the main user or the multisig coordinator.
+   - Note: Sharing the extended public key allows the coordinator to generate multiple multisig addresses without further interaction with the participant. However, it doesn't compromise the security of any participant's wallet.
+
+c. **Multisig Address Generation**:
+   - The main user or coordinator uses the collected extended public keys from all participants to generate the multisig addresses. With HD, they can produce a virtually infinite number of addresses in a structured manner, enhancing privacy since each transaction can go to a new address.
+   
+d. **Transaction Authorization**:
+   - When funds in a particular multisig address need to be spent, the transaction proposal is shared with the necessary number of participants (as per the threshold set, e.g., 3 of 5).
+   - Each participant uses their HD wallet to derive the appropriate private key for the address in question and then signs the transaction.
+   - Once the required number of signatures is collected, the transaction is broadcasted to the network.
+
+e. **Gap Limit Consideration**:
+   - HD wallets usually monitor a series of addresses for activity. If a certain number of consecutive addresses show no transaction history (often 20), the wallet stops checking further addresses. This is known as the "gap limit."
+   - In the context of multisig with HD, ensure that the gap limit isn't reached without transaction activity. Otherwise, some addresses may be skipped, which can cause confusion or missed funds. Participants must be somewhat coordinated in their use of addresses to avoid hitting this gap.
+
+f. **Backup and Recovery**:
+   - The advantage of using HD in multisig is that the backup process becomes streamlined. Each participant only needs to back up their seed phrase. In the event of device loss, the seed can be used to restore the entire HD wallet, including all derived keys for the multisig compartment.
+   - However, the multisig setup (like who the participants are, the required signatures, and the xpubs) should also be documented and stored securely. This information will be necessary to recover funds in case of device loss or other unforeseen circumstances.
+
+*By using HD with multisig, users can combine the privacy and structured benefits of HD wallets with the security enhancements of multisig configurations.*
 
 **6. Features for Enhanced Security:**
 
 - Two-factor authentication (2FA) for transaction approvals.
 - Notifications for any activity on the long-term storage.
 - Secure communication channel for transaction requests and approvals.
+
+**Enhanced Security Using Application Password in Seed Phrase Generation:**
+
+*Incorporating an application-specific password into the seed phrase generation process adds another layer of security to the wallet. By combining user input (application password) with the randomly generated seed phrase, the derived key becomes unique to each user, even if two users are somehow given the same seed phrase.*
+
+Here's how it can work:
+
+1. **Initialization**:
+    - When setting up the wallet for the first time, the user is prompted to provide an application password. This password should be robust, ideally consisting of alphanumeric characters and symbols.
+
+2. **Password Hashing**:
+    - To ensure that the user's password remains secure, it is hashed using a cryptographic hash function.
+
+3. **Seed Phrase Generation**:
+    - The wallet generates a standard seed phrase (typically 12 or 24 words) using a secure random number generator.
+
+4. **Combining Seed & Password**:
+    - The hashed version of the application password is combined with the seed phrase. This could be through a method like concatenation, salting, or another form of cryptographic mixing.
+
+5. **Final Key Derivation**:
+    - The combined data is then passed through a key derivation function to produce the final private key for the wallet. This private key is both a function of the seed and the user's application password.
+
+6. **Transaction and Access Authentication**:
+    - Every time the user wants to make a transaction or access certain secure sections of the wallet, they would need to provide their application password, ensuring an added layer of security.
+
+7. **Backup & Recovery**:
+    - Users should be informed that, for backup or recovery purposes, both the seed phrase and the application password are crucial. Losing either component would mean they cannot recover their funds.
+
+8. **Warning**:
+    - Emphasize the importance of never sharing the application password or writing it down with the seed phrase. These two components should be stored separately to ensure maximum security.
+
+*By integrating the application password into the seed phrase generation process, not only is the derived key unique but also the security is substantially heightened. Even if a malicious actor gains access to the user's seed phrase, without the application password, they can't access the funds. However, this approach also increases the responsibility on the user's end – losing the application password would mean they can't recover their funds, even if they have the seed phrase.*
+
+*To further protect user assets and information, the application can create two separate seeds: one associated with the user's actual password (real wallet) and the other tied to a duress password (decoy wallet). This approach ensures that even if the duress password is used, the intruder only gains access to the decoy wallet, which can be set up with limited or fake balances and addresses.*
+
+*Given the transparent nature of blockchain transactions, we need to make sure the decoy wallet is convincing enough. We can't fabricate blockchain-based transactions, but we can ensure the decoy wallet is set up in a way that's plausible without exposing the real wallet. Here's a revised approach:*
+
+**Dual Seed Creation with Real and Duress Passwords on a Transparent Blockchain:**
+
+**Initial Setup:**
+
+- Upon initial setup, the user generates a seed and corresponding password for their real wallet.
+They're then prompted to set up a "duress" password. This password is used to generate a completely separate seed for the decoy wallet.
+Decoy Wallet Initial Funding:
+
+- To ensure the decoy wallet appears genuine, users should transfer a small, believable amount of cryptocurrency to it. This amount would be far less than the primary wallet but enough to seem like a typical everyday wallet.
+Wallet Functionality Based on Password Entered:
+
+- Real Password: Provides access to the user's main wallet with all their actual funds, addresses, and transactions.
+Duress Password: Opens the decoy wallet, which has its real balances and transactions but is significantly less than the main wallet.
+Actions Triggered by Duress Password:
+
+- Alert Functionality: When the duress password is entered and the decoy wallet is accessed, the application discreetly sends an alert to a predefined contact or authority.
+
+- Protection Against Unauthorized Fund Transfer:
+
+- Transactions initiated from the decoy wallet could have a deliberate delay, giving the user a window to potentially block unauthorized transfers. Or, transactions can be automatically redirected to a secure vault address known only to the user.
+Backup & Recovery with Duress Password:
+
+- Restoring with the duress password only restores the decoy wallet, ensuring the primary wallet remains concealed and secure.
+Education & User Awareness:
+
+*Users need to be clearly informed about the difference between the two passwords and the separate wallets they control.
+It's crucial to emphasize the importance of occasionally using the decoy wallet for small, genuine transactions to maintain its legitimacy.*
+
+**Safety Precautions:**
+
+*Ensure users know that while the decoy wallet provides an additional layer of protection, it isn't a foolproof safety measure in all coercive situations. The best protection is prevention, such as keeping the existence of a larger wallet entirely confidential.*
+
+*This dual-seed approach, derived from two distinct passwords, enhances the security offerings of the wallet. While the real wallet contains the user's actual assets, the duress wallet serves as a protective layer, helping users maintain control over their assets even when faced with threats. Clear communication and user training are essential to the success of this strategy.*
+
+*In this revised approach, the decoy wallet is not merely a dummy, but a genuine but smaller-scale wallet. This ensures that if an imposter or malicious actor checks the blockchain, they will see legitimate transactions, but will hopefully be deterred by the smaller balance, believing they have accessed all there is.*
 
 **7. User Experience Enhancements:**
 
