@@ -718,3 +718,8 @@ Situations like lawsuits, debts, or governmental actions where funds might be se
 - **Transparency**: Ensures that in high-pressure scenarios, the owner's wishes and security protocols are followed.
 
 These extended use cases further solidify the utility of the Portmanteau Wallet in real-life situations. The combination of innovative blockchain solutions and traditional security measures makes it resilient to a wide array of challenges.
+
+### ***Multitouch Wallet Unlock feature***:
+- Brings an enhanced level of security and personalization to the Portmanteau app. Every time a user attempts to unlock their wallet, a distinct set of fingerprint marks will be randomly distributed across the screen. Despite the random distribution, the owner would be able to recognize the correct pattern or sequence necessary to unlock the wallet.
+
+This innovation ensures that even if someone observes the unlock process multiple times, they would not be able to memorize or recreate the correct sequence due to its dynamic nature. This unique identification method, customizable by the user, relies on the user's deep familiarity with their chosen pattern, safeguarding the wallet against unauthorized access and offering a robust yet user-friendly security solution.
